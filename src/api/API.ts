@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {store} from '../app/store'
+import {AppRootStateType, store} from '../app/store'
 
 export enum TaskStatuses {
     OnHold = '0',
@@ -45,19 +45,18 @@ export interface CreateUpdateDeleteCardResponseRequestData extends CreateCardReq
 }
 
 export type GetCardsRequestData = {
-    row?:string
+    row?: string
 }
 
 export const instance = axios.create({
     baseURL: 'https://trello.backend.tests.nekidaem.ru/api/v1/',
-    withCredentials: true
+    // withCredentials: true
 })
 
-axios.interceptors.request.use(function (instance) {
-    const token = store.getState().auth.token
-    instance.headers.Authorization = token
-
-    return instance
+instance.interceptors.request.use(function (config) {
+    const token = localStorage.getItem('token')
+    config.headers.Authorization = token ? token : ''
+    return config
 })
 
 

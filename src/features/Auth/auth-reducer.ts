@@ -10,13 +10,14 @@ export const login = createAsyncThunk('auth/login', async (data: LoginRequestDat
         let res = await authAPI.login(data)
         return {token: res.data.token}
     } catch (err) {
+        console.log(err[1])
         return rejectWithValue({errors: err.message})
     } finally {
         dispatch(setAppStatus({loading: true}))
     }
 })
 
-export const register = createAsyncThunk('auth/register', async (data: RegisterRequestData, {
+export const registration = createAsyncThunk('auth/registration', async (data: RegisterRequestData, {
     dispatch,
     rejectWithValue
 }) => {
@@ -40,7 +41,7 @@ export const initializeApp = createAsyncThunk('application/initializeApp', async
         const state = getState() as AppRootStateType
         const token = state.auth.token
         try {
-            const res = await authAPI.refreshToken(token)
+            await authAPI.refreshToken(token)
         } catch (err) {
             return rejectWithValue(err)
         } finally {
@@ -66,7 +67,7 @@ export const slice = createSlice({
             state.isLogged = true
             state.token = action.payload.token as string
         })
-            .addCase(register.fulfilled, (state, action) => {
+            .addCase(registration.fulfilled, (state, action) => {
                 state.token = action.payload.token as string
             })
     }

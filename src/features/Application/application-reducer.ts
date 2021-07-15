@@ -1,6 +1,5 @@
-import {createAction, createAsyncThunk, createSlice} from '@reduxjs/toolkit'
-import {authAPI} from '../../api/API'
-import {initializeApp, login} from '../Auth/auth-reducer'
+import {createAction, createSlice} from '@reduxjs/toolkit'
+import {initializeApp} from '../Auth/auth-reducer'
 
 export type AppErrorType = null | string
 export type appReducerInitialState = typeof initialState
@@ -8,7 +7,6 @@ export type appReducerInitialState = typeof initialState
 const initialState = {
     loading: false,
     error: null as AppErrorType,
-    isInitialized: false,
 }
 
 export const setAppStatus = createAction<{ loading: boolean }>('app/setAppStatus')
@@ -19,10 +17,7 @@ export const slice = createSlice({
     initialState: initialState,
     reducers: {},
     extraReducers: builder => {
-        builder.addCase(initializeApp.fulfilled, (state) => {
-            state.isInitialized = true
-        })
-            .addCase(setAppStatus, (state, action) => {
+            builder.addCase(setAppStatus, (state, action) => {
                 state.loading = action.payload.loading
             })
             .addCase(setAppError, (state, action) => {

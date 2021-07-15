@@ -1,24 +1,47 @@
-import {Button, Grid, TextField} from '@material-ui/core'
+import {Button, FormControl, FormGroup, Grid, Paper, TextField} from '@material-ui/core'
 import {SubmitHandler, useForm} from 'react-hook-form'
+import * as Yup from 'yup'
+import {yupResolver} from '@hookform/resolvers/yup'
+import {useDispatch} from 'react-redux'
+import {login} from './auth-reducer'
 
 type LoginInputs = {
-    login: string,
+    username: string
     password: string
 };
 
+const loginValidationSchema = Yup.object().shape({
+    username: Yup.string()
+        .required('Login is required'),
+    password: Yup.string()
+        .required('Password is required')
+})
+
 export const Login = () => {
-    const {register, handleSubmit, formState: {errors}} = useForm<LoginInputs>()
-    const onSubmit: SubmitHandler<LoginInputs> = data => console.log(data)
+    const dispatch = useDispatch()
+    const {register, handleSubmit, formState: {errors}} = useForm<LoginInputs>({
+        resolver: yupResolver(loginValidationSchema)
+    })
+    const onSubmit: SubmitHandler<LoginInputs> = data => dispatch(login(data))
     return (
-        <Grid container justify="center">
-            <Grid item xs={4}>
+        <Grid container>
+            <Grid>
+                <Paper style={{padding: '500px'}}>
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <TextField id={'login'} label={errors.login && 'Error'}
-                               helperText={errors.login && errors.login.message}  {...register('login')}/>
-                    <TextField id={'password'} label={errors.password && 'Error'}
-                               helperText={errors.login && errors.login.message} type={'email'} {...register('password')}/>
-                    <Button color={'primary'} variant={'contained'} type="submit">Login</Button>
+                    <FormControl>
+                        <FormGroup>
+                            <TextField error={!!errors.username} id={'login'} label={errors.username ? 'Error' : 'Login'}
+                                       helperText={errors.username && errors.username.message}
+                                       autoComplete={'new-password'}  {...register('username')}/>
+                            <TextField error={!!errors.password} id={'password'}
+                                       label={errors.password ? 'Error' : 'Pasword'}
+                                       helperText={errors.password && errors.password.message}
+                                       type={'password'} autoComplete={'new-password'} {...register('password')}/>
+                            <Button color={'primary'} variant={'contained'} type="submit">Login</Button>
+                        </FormGroup>
+                    </FormControl>
                 </form>
+                </Paper>
             </Grid>
         </Grid>
     )

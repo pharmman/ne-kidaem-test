@@ -23,8 +23,11 @@ export const store = configureStore({
 
 store.subscribe(throttle(() => {
     saveState(store.getState())
-    localStorage.setItem('app-state', JSON.stringify(store.getState()))
 }, 1000))
+
+store.subscribe(() => {
+    localStorage.setItem('token', JSON.stringify(store.getState().auth.token))
+})
 
 // @ts-ignore
 window.store = store
