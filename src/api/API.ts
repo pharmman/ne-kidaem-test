@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { store } from '../app/store'
+import {store} from '../app/store'
 
 export enum TaskStatuses {
     OnHold = '0',
@@ -27,7 +27,7 @@ interface RegisterResponseData extends LoginResponseData {
     email?: string
 }
 
-type CardType = {
+export type CardType = {
     id: number
     row: string
     seq_num: number
@@ -39,9 +39,13 @@ interface CreateCardRequestData {
     text: string
 }
 
-interface CreateUpdateCardResponseData extends CreateCardRequestData {
-    id: number,
+interface CreateUpdateDeleteCardResponseRequestData extends CreateCardRequestData {
+    id?: number,
     seq_num: number,
+}
+
+export type GetCardsRequestData = {
+    row?:string
 }
 
 export const instance = axios.create({
@@ -70,17 +74,24 @@ export const authAPI = {
 }
 
 const CardsAPI = {
-    getCards(row?: string) {
+    getCards(data: GetCardsRequestData) {
         return instance.get<CardType[]>('cards/', {
             params: {
                 row
             }
         })
     },
-        createCard(data: CreateCardRequestData) {
-        return instance.post<CreateUpdateCardResponseData>('cards/', data)
+    createCard(data: CreateCardRequestData) {
+        return instance.post<CreateUpdateDeleteCardResponseRequestData>('cards/', data)
     },
-    updateCard(data:CreateUpdateCardResponseData) {
-        return instance.patch<CreateUpdateCardResponseData>(`cards/${data.id}`,{})
+    updateCard(data: CreateUpdateDeleteCardResponseRequestData) {
+        return instance.patch<CreateUpdateDeleteCardResponseRequestData>(`cards/${data.id}`, {
+            row: data.row,
+            text: data.text,
+            seq_num: data.seq_num
+        } as CreateUpdateDeleteCardResponseRequestData)
+    },
+    deleteCard(id: string) {
+        return instance.delete(`cards/${id}`)
     }
 }
