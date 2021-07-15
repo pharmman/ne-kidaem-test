@@ -5,12 +5,14 @@ import {appReducer} from '../features/Application/application-reducer'
 import {authReducer} from '../features/Auth/auth-reducer'
 import {loadState, saveState} from '../utils/localStorageUtils'
 import throttle from 'lodash.throttle'
+import {cardsReducer} from '../features/Cards/cards-reducer'
 
 export type AppRootStateType = ReturnType<typeof store.getState>
 
 export const rootReducer = combineReducers({
     app: appReducer,
-    auth: authReducer
+    auth: authReducer,
+    cards: cardsReducer
 })
 
 export const store = configureStore({

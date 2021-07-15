@@ -34,12 +34,12 @@ export type CardType = {
     text: string
 }
 
-interface CreateCardRequestData {
+export interface CreateCardRequestData {
     row: TaskStatuses,
     text: string
 }
 
-interface CreateUpdateDeleteCardResponseRequestData extends CreateCardRequestData {
+export interface CreateUpdateDeleteCardResponseRequestData extends CreateCardRequestData {
     id?: number,
     seq_num: number,
 }
@@ -73,11 +73,11 @@ export const authAPI = {
     }
 }
 
-const CardsAPI = {
-    getCards(data: GetCardsRequestData) {
+export const cardsAPI = {
+    getCards(data?: GetCardsRequestData) {
         return instance.get<CardType[]>('cards/', {
             params: {
-                row
+                row: data && data.row
             }
         })
     },
