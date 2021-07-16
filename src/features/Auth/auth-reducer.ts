@@ -1,19 +1,20 @@
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit'
 import {authAPI, LoginRequestData, RegisterRequestData} from '../../api/API'
 import {AppRootStateType} from '../../app/store'
-import {setAppStatus} from '../Application/application-reducer'
+import {setAppError, setAppStatus} from '../Application/application-reducer'
 
 
 export const login = createAsyncThunk('auth/login', async (data: LoginRequestData, {dispatch, rejectWithValue}) => {
     dispatch(setAppStatus({loading: true}))
     try {
         let res = await authAPI.login(data)
+        dispatch(setIsLogged({isLogged: true}))
         return {token: res.data.token}
     } catch (err) {
-        console.log(err[1])
+        dispatch(setAppError({error: 'Some error occurred'}))
         return rejectWithValue({errors: err.message})
     } finally {
-        dispatch(setAppStatus({loading: true}))
+        dispatch(setAppStatus({loading: false}))
     }
 })
 
@@ -24,25 +25,28 @@ export const registration = createAsyncThunk('auth/registration', async (data: R
     dispatch(setAppStatus({loading: true}))
     try {
         let res = await authAPI.register(data)
+        dispatch(setIsRegistered({isRegistered: true}))
         return {token: res.data.token}
     } catch (err) {
-        return rejectWithValue({errors: err.message})
+        dispatch(setAppError({error: 'Some error occurred'}))
+        return rejectWithValue(err)
     } finally {
-        dispatch(setAppStatus({loading: true}))
+        dispatch(setAppStatus({loading: false}))
     }
 })
 
-export const initializeApp = createAsyncThunk('application/initializeApp', async (params, {
+export const tokenRefresh = createAsyncThunk('application/tokenRefresh', async (token: string, {
         dispatch,
         rejectWithValue,
         getState
     }) => {
         dispatch(setAppStatus({loading: true}))
-        const state = getState() as AppRootStateType
-        const token = state.auth.token
         try {
-            await authAPI.refreshToken(token)
+            const res = await authAPI.refreshToken(token)
+            dispatch(setIsLogged({isLogged: true}))
+            return {token: res.data.token}
         } catch (err) {
+            dispatch(setIsLogged({isLogged: false}))
             return rejectWithValue(err)
         } finally {
             dispatch(setAppStatus({loading: false}))
@@ -55,25 +59,33 @@ export const slice = createSlice({
     name: 'auth',
     initialState: {
         isLogged: false,
+        isRegistered: false,
         token: ''
     },
     reducers: {
         setIsLogged: (state, action: PayloadAction<{ isLogged: boolean }>) => {
             state.isLogged = action.payload.isLogged
+        },
+        setIsRegistered: (state, action: PayloadAction<{ isRegistered: boolean }>) => {
+            state.isRegistered = action.payload.isRegistered
         }
     },
     extraReducers: builder => {
         builder.addCase(login.fulfilled, (state, action) => {
             state.isLogged = true
-            state.token = action.payload.token as string
+            state.token = action.payload.token
         })
             .addCase(registration.fulfilled, (state, action) => {
-                state.token = action.payload.token as string
+                state.token = action.payload.token
+            })
+            .addCase(tokenRefresh.fulfilled, (state, action) => {
+                state.token = action.payload.token
             })
     }
 })
 
 export const authReducer = slice.reducer
+export const {setIsLogged, setIsRegistered} = slice.actions
 
 
 

@@ -1,7 +1,6 @@
 import axios from 'axios'
-import {AppRootStateType, store} from '../app/store'
 
-export enum TaskStatuses {
+export enum RowStatuses {
     OnHold = '0',
     InProgress = '1',
     NeedReview = '2',
@@ -11,7 +10,7 @@ export enum TaskStatuses {
 interface LoginResponseData {
     username: string
     password: string
-    token?: string
+    token: string
 }
 
 export interface LoginRequestData {
@@ -29,19 +28,14 @@ interface RegisterResponseData extends LoginResponseData {
 
 export type CardType = {
     id: number
-    row: string
+    row: RowStatuses
     seq_num: number
     text: string
 }
 
 export interface CreateCardRequestData {
-    row: TaskStatuses,
+    row: RowStatuses,
     text: string
-}
-
-export interface CreateUpdateDeleteCardResponseRequestData extends CreateCardRequestData {
-    id?: number,
-    seq_num: number,
 }
 
 export type GetCardsRequestData = {
@@ -49,13 +43,15 @@ export type GetCardsRequestData = {
 }
 
 export const instance = axios.create({
-    baseURL: 'https://trello.backend.tests.nekidaem.ru/api/v1/',
+    baseURL: 'https://trello.backend.tests.nekidaem.ru/api/v1/'
     // withCredentials: true
 })
 
 instance.interceptors.request.use(function (config) {
-    const token = localStorage.getItem('token')
-    config.headers.Authorization = token ? token : ''
+    if (localStorage.getItem('token')) {
+        const token = JSON.parse(localStorage.getItem('token') as string)
+        config.headers.Authorization = token && `JWT ${token}`
+    }
     return config
 })
 
@@ -68,7 +64,7 @@ export const authAPI = {
         return instance.post<RegisterResponseData>('users/create/', data)
     },
     refreshToken(token: string) {
-        return instance.post<{ token: string }>('users/refresh_token/', token)
+        return instance.post<{ token: string }>('users/refresh_token/', {token})
     }
 }
 
@@ -81,16 +77,16 @@ export const cardsAPI = {
         })
     },
     createCard(data: CreateCardRequestData) {
-        return instance.post<CreateUpdateDeleteCardResponseRequestData>('cards/', data)
+        return instance.post<CardType>('cards/', data)
     },
-    updateCard(data: CreateUpdateDeleteCardResponseRequestData) {
-        return instance.patch<CreateUpdateDeleteCardResponseRequestData>(`cards/${data.id}`, {
+    updateCard(data: CardType) {
+        return instance.patch<CardType>(`cards/${data.id}`, {
             row: data.row,
             text: data.text,
             seq_num: data.seq_num
-        } as CreateUpdateDeleteCardResponseRequestData)
+        } as CardType)
     },
-    deleteCard(id: string) {
-        return instance.delete(`cards/${id}`)
+    deleteCard(id: number) {
+        return instance.delete(`cards/${id}/`)
     }
 }

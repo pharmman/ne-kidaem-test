@@ -22,7 +22,9 @@ export const store = configureStore({
 })
 
 store.subscribe(throttle(() => {
-    saveState(store.getState())
+    saveState({
+        cards: store.getState().cards,
+    } as AppRootStateType)
 }, 1000))
 
 store.subscribe(() => {

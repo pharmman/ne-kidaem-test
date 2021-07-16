@@ -3,7 +3,8 @@ import {SubmitHandler, useForm} from 'react-hook-form'
 import * as Yup from 'yup'
 import {yupResolver} from '@hookform/resolvers/yup'
 import {useDispatch} from 'react-redux'
-import {login} from './auth-reducer'
+import {login, setIsRegistered} from './auth-reducer'
+import {useEffect} from 'react'
 
 type LoginInputs = {
     username: string
@@ -23,6 +24,7 @@ export const Login = () => {
         resolver: yupResolver(loginValidationSchema)
     })
     const onSubmit: SubmitHandler<LoginInputs> = data => dispatch(login(data))
+
     return (
         <Grid container>
             <Grid>
@@ -30,13 +32,13 @@ export const Login = () => {
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <FormControl>
                         <FormGroup>
-                            <TextField error={!!errors.username} id={'login'} label={errors.username ? 'Error' : 'Login'}
+                            <TextField error={!!errors.username} id={'login'} label={'Login'}
                                        helperText={errors.username && errors.username.message}
-                                       autoComplete={'new-password'}  {...register('username')}/>
+                                       {...register('username')}/>
                             <TextField error={!!errors.password} id={'password'}
-                                       label={errors.password ? 'Error' : 'Pasword'}
+                                       label={'Pasword'}
                                        helperText={errors.password && errors.password.message}
-                                       type={'password'} autoComplete={'new-password'} {...register('password')}/>
+                                       type={'password'} {...register('password')}/>
                             <Button color={'primary'} variant={'contained'} type="submit">Login</Button>
                         </FormGroup>
                     </FormControl>

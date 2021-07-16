@@ -1,35 +1,38 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit'
-import {
-    cardsAPI,
-    CardType,
-    CreateCardRequestData,
-    CreateUpdateDeleteCardResponseRequestData,
-    GetCardsRequestData
-} from '../../api/API'
+import {cardsAPI, CardType, CreateCardRequestData, GetCardsRequestData, RowStatuses} from '../../api/API'
 import {setAppError, setAppStatus} from '../Application/application-reducer'
+import {keys} from '@material-ui/core/styles/createBreakpoints'
+import {RowsTitles} from './RowsList'
 
-export const getCards = createAsyncThunk('cards/getCards', async (params:{data:GetCardsRequestData} | undefined, {
+export type CardsStateType = {
+    [key : string]: CardType[]
+}
+
+export const getCards = createAsyncThunk('cards/getCards', async (params: { data: GetCardsRequestData } | undefined, {
     dispatch,
-    rejectWithValue
+    rejectWithValue,
 }) => {
     dispatch(setAppStatus({loading: true}))
     try {
         const res = await cardsAPI.getCards(params && params.data)
         return {cards: res.data}
     } catch (err) {
-        dispatch(setAppError(err))
+        console.log(err.payload.data.detail)
+        dispatch(setAppError(err.payload.data.detail))
         return rejectWithValue({})
     } finally {
         dispatch(setAppStatus({loading: false}))
     }
 })
 
-//TODO проверить getCards
-export const createCard = createAsyncThunk('cards/createCard', async (data:CreateCardRequestData, {dispatch, rejectWithValue}) => {
+export const createCard = createAsyncThunk('cards/createCard', async (data: CreateCardRequestData, {
+    dispatch,
+    rejectWithValue
+}) => {
     dispatch(setAppStatus({loading: true}))
     try {
-        await cardsAPI.createCard(data)
-        dispatch(getCards())
+        const res = await cardsAPI.createCard(data)
+        return {card: res.data}
     } catch (err) {
         dispatch(setAppError(err))
         return rejectWithValue({})
@@ -38,7 +41,7 @@ export const createCard = createAsyncThunk('cards/createCard', async (data:Creat
     }
 })
 
-export const deleteCard = createAsyncThunk('cards/deleteCard', async (id:string, {dispatch, rejectWithValue}) => {
+export const deleteCard = createAsyncThunk('cards/deleteCard', async (id: number, {dispatch, rejectWithValue}) => {
     dispatch(setAppStatus({loading: true}))
     try {
         await cardsAPI.deleteCard(id)
@@ -51,11 +54,14 @@ export const deleteCard = createAsyncThunk('cards/deleteCard', async (id:string,
     }
 })
 
-export const updateCard = createAsyncThunk('cards/updateCard', async (data:CreateUpdateDeleteCardResponseRequestData, {dispatch, rejectWithValue}) => {
+export const updateCard = createAsyncThunk('cards/updateCard', async (data: CardType, {
+    dispatch,
+    rejectWithValue
+}) => {
     dispatch(setAppStatus({loading: true}))
     try {
-        await cardsAPI.updateCard(data)
-        dispatch(getCards())
+        const res = await cardsAPI.updateCard(data)
+        return {card: res.data}
     } catch (err) {
         dispatch(setAppError(err))
         return rejectWithValue({})
@@ -67,12 +73,20 @@ export const updateCard = createAsyncThunk('cards/updateCard', async (data:Creat
 
 const slice = createSlice({
     name: 'cards',
-    initialState: [] as CardType[],
+    initialState: {} as CardsStateType,
     reducers: {},
     extraReducers: builder => {
-        builder.addCase(getCards.fulfilled,(state, action) => {
-            return action.payload.cards
+        builder.addCase(getCards.fulfilled, (state, action) => {
+            Object.values(RowStatuses).forEach(r => {
+                state[r] = action.payload.cards.filter(c => c.row === r)
+            })
         })
+            .addCase(createCard.fulfilled, (state, action) => {
+            state[action.payload.card.row].push(action.payload.card)
+        })
+            .addCase(updateCard.fulfilled, (state, action) => {
+                state[action.payload.card.row] = [action.payload.card]
+            })
     }
 })
 
