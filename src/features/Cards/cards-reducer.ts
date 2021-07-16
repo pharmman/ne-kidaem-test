@@ -5,12 +5,12 @@ import {keys} from '@material-ui/core/styles/createBreakpoints'
 import {RowsTitles} from './RowsList'
 
 export type CardsStateType = {
-    [key : string]: CardType[]
+    [key: string]: CardType[]
 }
 
 export const getCards = createAsyncThunk('cards/getCards', async (params: { data: GetCardsRequestData } | undefined, {
     dispatch,
-    rejectWithValue,
+    rejectWithValue
 }) => {
     dispatch(setAppStatus({loading: true}))
     try {
@@ -54,14 +54,16 @@ export const deleteCard = createAsyncThunk('cards/deleteCard', async (id: number
     }
 })
 
-export const updateCard = createAsyncThunk('cards/updateCard', async (data: CardType, {
+export const updateCard = createAsyncThunk('cards/updateCard', async (param:{data: CardType, previouslyRow: string}, {
     dispatch,
     rejectWithValue
 }) => {
     dispatch(setAppStatus({loading: true}))
     try {
-        const res = await cardsAPI.updateCard(data)
-        return {card: res.data}
+        const res = await cardsAPI.updateCard(param.data)
+        // console.log(res.data)
+        // console.log(data.row)
+        return {card: res.data, previouslyRow: param.previouslyRow}
     } catch (err) {
         dispatch(setAppError(err))
         return rejectWithValue({})
@@ -82,10 +84,15 @@ const slice = createSlice({
             })
         })
             .addCase(createCard.fulfilled, (state, action) => {
-            state[action.payload.card.row].push(action.payload.card)
-        })
+                state[action.payload.card.row].push(action.payload.card)
+            })
             .addCase(updateCard.fulfilled, (state, action) => {
-                state[action.payload.card.row] = [action.payload.card]
+                debugger
+                const index = state[action.payload.previouslyRow].findIndex(c => c.id === action.payload.card.id)
+                console.log(index)
+                // state[action.payload.card.row].push(action.payload.card)
+                state[action.payload.previouslyRow].splice(index, 1)
+                state[action.payload.card.row].unshift(action.payload.card)
             })
     }
 })

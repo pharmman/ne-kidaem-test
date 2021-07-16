@@ -80,7 +80,7 @@ export const cardsAPI = {
         return instance.post<CardType>('cards/', data)
     },
     updateCard(data: CardType) {
-        return instance.patch<CardType>(`cards/${data.id}`, {
+        return instance.patch<CardType>(`cards/${data.id}/`, {
             row: data.row,
             text: data.text,
             seq_num: data.seq_num

@@ -6,6 +6,7 @@ import {useSelector} from 'react-redux'
 import {AppRootStateType} from '../../app/store'
 import {RowsTitles} from './RowsList'
 import {Card} from './Card/Card'
+import {Draggable, Droppable} from 'react-beautiful-dnd'
 
 type RowProps = {
     title: RowsTitles
@@ -42,15 +43,47 @@ export const Row: React.FC<RowProps> = ({title, color}) => {
         cardsNumber = cards.length
     }
 
+    let card:CardType;
+
     return (
         <div className={classes.rowWrapper}>
-            <div className={classes.title}>
-                <Typography variant={'h6'}>{`${title} (${cardsNumber})`}</Typography>
-            </div>
-            <div>
-                {cards && cards.map((c, index) => <Card key={index} id={c.id} text={c.text}/>)}
-            </div>
-            <CreateCard row={row}/>
+            <Droppable droppableId={row}>
+                {((provided, snapshot) => {
+                    return (
+                        <div {...provided.droppableProps} ref={provided.innerRef}
+                             style={{
+                                 background: snapshot.isDraggingOver ? 'lightblue' : 'lightyellow'
+                             }}
+                        >
+                            <div className={classes.title}>
+                                <Typography variant={'h6'}>{`${title} (${cardsNumber})`}</Typography>
+                            </div>
+                            <div>
+                                {cards && cards.map((c, index) =>
+                                    <Draggable key={c.id} draggableId={c.id.toString()}  index={index}>
+                                        {(provided, snapshot) => {
+                                            return (
+                                                <div ref={provided.innerRef}
+                                                    {...provided.draggableProps}
+                                                    {...provided.dragHandleProps}
+                                                    style={{
+                                                        userSelect: 'none',
+                                                        backgroundColor: snapshot.isDragging ? '#3263B4A' : '#456C86',
+                                                            ...provided.draggableProps.style
+                                                    }}
+                                                    >
+                                                    <Card id={c.id} text={c.text}/>
+                                                </div>
+                                            )
+                                        }}
+                                    </Draggable>
+                                )}
+                            </div>
+                            <CreateCard row={row}/>
+                        </div>
+                    )
+                })}
+            </Droppable>
         </div>
     )
 }

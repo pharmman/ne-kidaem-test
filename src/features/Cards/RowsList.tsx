@@ -1,11 +1,12 @@
-import {RowStatuses} from '../../api/API'
+import {CardType, RowStatuses} from '../../api/API'
 import {Row} from './Row'
 import {useDispatch, useSelector} from 'react-redux'
 import {useEffect} from 'react'
-import {getCards} from './cards-reducer'
+import {CardsStateType, getCards, updateCard} from './cards-reducer'
 import {useHistory, useLocation} from 'react-router-dom'
 import {makeStyles} from '@material-ui/core'
 import {AppRootStateType} from '../../app/store'
+import {DragDropContext, DropResult} from 'react-beautiful-dnd'
 
 type TitlesColor = {
     [key in RowsTitles]: string
@@ -33,16 +34,34 @@ export const RowsList = () => {
     const classes = useStyles()
     const dispatch = useDispatch()
     const statuses = Object.keys(RowStatuses)
+    const cards = useSelector<AppRootStateType, CardsStateType>(state => state.cards)
     const mappedCards = statuses.map((s: string, index) => <Row key={index} title={s as RowsTitles}
                                                                 color={titlesColor[s as RowsTitles]}/>)
 
     useEffect(() => {
-            dispatch(getCards())
+        dispatch(getCards())
     }, [dispatch])
+
+    const onDragEnd = (result: DropResult) => {
+        if (!result.destination) return
+        const card: CardType | undefined = cards[result.source.droppableId].find(c => c.id === Number(result.draggableId))
+        if (card) {
+            dispatch(updateCard({
+                data: {
+                    id: card.id,
+                    row: result.destination.droppableId as RowStatuses,
+                    seq_num: card.seq_num,
+                    text: card.text
+                }, previouslyRow: result.source.droppableId
+            }))
+        }
+    }
 
     return (
         <div className={classes.wrapper}>
-            {mappedCards}
+            <DragDropContext onDragEnd={(result, provided) => onDragEnd(result)}>
+                {mappedCards}
+            </DragDropContext>
         </div>
     )
 }
