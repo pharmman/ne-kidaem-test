@@ -1,4 +1,4 @@
-import {makeStyles} from '@material-ui/core'
+import {Box, makeStyles} from '@material-ui/core'
 import React from 'react'
 import CloseIcon from '@material-ui/icons/Close'
 import {useDispatch} from 'react-redux'
@@ -9,33 +9,47 @@ type CardProps = {
     text: string
 }
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
     cardWrapper: {
-        backgroundColor: '#1E2021',
-        maxWidth: '300px',
-        padding: '5px',
-        marginBottom: '10px',
+        minHeight: '80px',
+        padding: '10px',
+        margin: '10px',
         display: 'flex',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        backgroundColor: '#1E2021',
+        color: '#919697',
+        wordBreak: 'break-all'
+    },
+    id: {
+        color: '#FFF'
+    },
+    firstLine: {
+        display: 'inline-block',
+        marginBottom: theme.spacing(1)
+    },
+    deleteIcon: {
+        '&:hover': {
+            color: '#FFF'
+        },
+        cursor: 'pointer'
     }
-})
+}))
 
 
 export const Card: React.FC<CardProps> = ({id, text}) => {
     const classes = useStyles()
     const dispatch = useDispatch()
-    const removeCard = () => {
-        dispatch(deleteCard(id))
-    }
+    const removeCard = () => dispatch(deleteCard(id))
+
     return (
-        <div className={classes.cardWrapper}>
+        <Box className={classes.cardWrapper}>
             <div>
-                <p><b>id: </b>{id}</p>
-                <p>{text}</p>
+                <span className={classes.firstLine}><b className={classes.id}>id: </b>{id}</span><br/>
+                <span>{text}</span>
             </div>
             <div>
-                <CloseIcon onClick={removeCard} fontSize={'small'}/>
+                <CloseIcon className={classes.deleteIcon} onClick={removeCard} fontSize={'small'}/>
             </div>
-        </div>
+        </Box>
     )
 }

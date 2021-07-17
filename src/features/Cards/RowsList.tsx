@@ -3,7 +3,7 @@ import {Row} from './Row'
 import {useDispatch, useSelector} from 'react-redux'
 import {useEffect} from 'react'
 import {CardsStateType, getCards, updateCard} from './cards-reducer'
-import {makeStyles} from '@material-ui/core'
+import {Box, makeStyles} from '@material-ui/core'
 import {AppRootStateType} from '../../app/store'
 import {DragDropContext, DropResult} from 'react-beautiful-dnd'
 
@@ -13,10 +13,12 @@ type TitlesColor = {
 
 const useStyles = makeStyles({
     wrapper: {
+        minHeight: '100vh',
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap'
+        justifyContent: 'space-around',
+        flexWrap: 'wrap',
+        backgroundColor: 'var(--main-bg-color)',
     }
 })
 
@@ -42,7 +44,6 @@ export const RowsList = () => {
     }, [dispatch])
 
     const onDragEnd = (result: DropResult) => {
-        console.log(result)
         if (!result.destination) return
         const card: CardType | undefined = cards[result.source.droppableId].find(c => c.id === Number(result.draggableId))
         if (card) {
@@ -58,10 +59,10 @@ export const RowsList = () => {
     }
 
     return (
-        <div className={classes.wrapper}>
+        <Box className={classes.wrapper}>
             <DragDropContext onDragEnd={(result, provided) => onDragEnd(result)}>
                 {mappedCards}
             </DragDropContext>
-        </div>
+        </Box>
     )
 }
