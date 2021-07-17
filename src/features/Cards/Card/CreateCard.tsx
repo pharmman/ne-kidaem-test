@@ -1,15 +1,13 @@
 import AddIcon from '@material-ui/icons/Add'
 import CloseIcon from '@material-ui/icons/Close'
-import {useState} from 'react'
+import React, {useState} from 'react'
 import {Button, FormControl, FormHelperText, makeStyles, TextField} from '@material-ui/core'
 import {useDispatch} from 'react-redux'
 import {createCard} from '../cards-reducer'
 import {RowStatuses} from '../../../api/API'
 import {SubmitHandler, useForm} from 'react-hook-form'
-import {login} from '../../Auth/auth-reducer'
-import {yupResolver} from '@hookform/resolvers/yup'
 
-type CreateCard = {
+type CreateCardProps = {
     row: RowStatuses
 }
 
@@ -23,7 +21,7 @@ const useStyles = makeStyles({
     }
 })
 
-export const CreateCard: React.FC<CreateCard> = ({row}) => {
+export const CreateCard: React.FC<CreateCardProps> = ({row}) => {
     const classes = useStyles()
     const dispatch = useDispatch()
     const [addCard, setAddCard] = useState(false)

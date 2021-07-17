@@ -1,6 +1,5 @@
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit'
 import {authAPI, LoginRequestData, RegisterRequestData} from '../../api/API'
-import {AppRootStateType} from '../../app/store'
 import {setAppError, setAppStatus} from '../Application/application-reducer'
 
 

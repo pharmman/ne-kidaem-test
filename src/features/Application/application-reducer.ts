@@ -1,5 +1,4 @@
 import {createAction, createSlice} from '@reduxjs/toolkit'
-import {tokenRefresh} from '../Auth/auth-reducer'
 
 export type AppErrorType = null | string
 export type appReducerInitialState = typeof initialState
