@@ -1,5 +1,4 @@
-.appWrapper {
-    padding: 20px;
-    background: #33363D;
-    min-height: 100vh;
+:root {
+--main-bg-color: #33363D
 }
+

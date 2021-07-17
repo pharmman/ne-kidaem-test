@@ -43,6 +43,7 @@ export const RowsList = () => {
     }, [dispatch])
 
     const onDragEnd = (result: DropResult) => {
+        console.log(result)
         if (!result.destination) return
         const card: CardType | undefined = cards[result.source.droppableId].find(c => c.id === Number(result.draggableId))
         if (card) {
@@ -50,7 +51,7 @@ export const RowsList = () => {
                 data: {
                     id: card.id,
                     row: result.destination.droppableId as RowStatuses,
-                    seq_num: card.seq_num,
+                    seq_num: result.destination.index,
                     text: card.text
                 }, previouslyRow: result.source.droppableId
             }))

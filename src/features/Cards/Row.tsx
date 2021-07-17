@@ -43,8 +43,6 @@ export const Row: React.FC<RowProps> = ({title, color}) => {
         cardsNumber = cards.length
     }
 
-    let card:CardType;
-
     return (
         <div className={classes.rowWrapper}>
             <Droppable droppableId={row}>
@@ -52,7 +50,7 @@ export const Row: React.FC<RowProps> = ({title, color}) => {
                     return (
                         <div {...provided.droppableProps} ref={provided.innerRef}
                              style={{
-                                 background: snapshot.isDraggingOver ? 'lightblue' : 'lightyellow'
+                                 // background: snapshot.isDraggingOver ? 'lightblue' : 'lightyellow'
                              }}
                         >
                             <div className={classes.title}>
@@ -68,7 +66,7 @@ export const Row: React.FC<RowProps> = ({title, color}) => {
                                                     {...provided.dragHandleProps}
                                                     style={{
                                                         userSelect: 'none',
-                                                        backgroundColor: snapshot.isDragging ? '#3263B4A' : '#456C86',
+                                                        // backgroundColor: snapshot.isDragging ? '#3263B4A' : '#456C86',
                                                             ...provided.draggableProps.style
                                                     }}
                                                     >
