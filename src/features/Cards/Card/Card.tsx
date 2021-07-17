@@ -43,13 +43,13 @@ export const Card: React.FC<CardProps> = ({id, text}) => {
 
     return (
         <Box className={classes.cardWrapper}>
-            <div>
+            <Box>
                 <span className={classes.firstLine}><b className={classes.id}>id: </b>{id}</span><br/>
                 <span>{text}</span>
-            </div>
-            <div>
+            </Box>
+            <Box>
                 <CloseIcon className={classes.deleteIcon} onClick={removeCard} fontSize={'small'}/>
-            </div>
+            </Box>
         </Box>
     )
 }

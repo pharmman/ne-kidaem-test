@@ -18,7 +18,7 @@ const useStyles = makeStyles({
         flexDirection: 'row',
         justifyContent: 'space-around',
         flexWrap: 'wrap',
-        backgroundColor: 'var(--main-bg-color)',
+        backgroundColor: 'var(--main-bg-color)'
     }
 })
 
@@ -36,12 +36,14 @@ export const RowsList = () => {
     const dispatch = useDispatch()
     const statuses = Object.keys(RowStatuses)
     const cards = useSelector<AppRootStateType, CardsStateType>(state => state.cards)
-    const mappedCards = statuses.map((s: string, index) => <Row key={index} title={s as RowsTitles}
-                                                                color={titlesColor[s as RowsTitles]}/>)
+    const mappedRows = statuses.map((s: string, index) => <Row key={index} title={s as RowsTitles}
+                                                               color={titlesColor[s as RowsTitles]}/>)
 
     useEffect(() => {
-        dispatch(getCards())
-    }, [dispatch])
+        if (Object.keys(cards).length === 0) {
+            dispatch(getCards())
+        }
+    }, [dispatch, cards])
 
     const onDragEnd = (result: DropResult) => {
         if (!result.destination) return
@@ -61,7 +63,7 @@ export const RowsList = () => {
     return (
         <Box className={classes.wrapper}>
             <DragDropContext onDragEnd={(result, provided) => onDragEnd(result)}>
-                {mappedCards}
+                {mappedRows}
             </DragDropContext>
         </Box>
     )
