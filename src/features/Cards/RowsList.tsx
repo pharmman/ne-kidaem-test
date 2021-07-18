@@ -62,14 +62,15 @@ export const RowsList = () => {
                     row: result.destination.droppableId as RowStatuses,
                     seq_num: result.destination.index,
                     text: card.text
-                }, previouslyRow: result.source.droppableId
+                }, previouslyRow: result.source.droppableId,
+                previouslySeqNum: result.source.index
             }))
         }
     }
 
     return (
         <Box className={classes.wrapper}>
-            <DragDropContext onDragEnd={(result, provided) => onDragEnd(result)}>
+            <DragDropContext onDragEnd={(result) => onDragEnd(result)}>
                 {mappedRows}
             </DragDropContext>
         </Box>

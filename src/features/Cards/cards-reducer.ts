@@ -52,9 +52,9 @@ export const deleteCard = createAsyncThunk('cards/deleteCard', async (id: number
     }
 })
 
-export const updateCard = createAsyncThunk('cards/updateCard', async (param: { data: CardType, previouslyRow: string }, {
+export const updateCard = createAsyncThunk('cards/updateCard', async (param: { data: CardType, previouslyRow: string, previouslySeqNum: number }, {
     dispatch,
-    rejectWithValue,
+    rejectWithValue
 }) => {
     dispatch(setAppStatus({loading: true}))
     try {
@@ -62,7 +62,7 @@ export const updateCard = createAsyncThunk('cards/updateCard', async (param: { d
         return {card: res.data, previouslyRow: param.previouslyRow}
     } catch (err) {
         dispatch(setAppError(err))
-        return rejectWithValue({})
+        return rejectWithValue({card: param.data, previouslyRow: param.previouslyRow})
     } finally {
         dispatch(setAppStatus({loading: false}))
     }
@@ -83,12 +83,12 @@ const slice = createSlice({
                 state[action.payload.card.row].push(action.payload.card)
             })
             .addCase(updateCard.pending, (state, action) => {
-
+                state[action.meta.arg.previouslyRow].splice(action.meta.arg.previouslySeqNum, 1)
+                state[action.meta.arg.data.row].splice(action.meta.arg.data.seq_num, 0, action.meta.arg.data)
             })
-            .addCase(updateCard.fulfilled, (state, action) => {
-                const index = state[action.payload.previouslyRow].findIndex(c => c.id === action.payload.card.id)
-                state[action.payload.previouslyRow].splice(index, 1)
-                state[action.payload.card.row].splice(action.payload.card.seq_num, 0, action.payload.card)
+            .addCase(updateCard.rejected, (state, action) => {
+                state[action.meta.arg.data.row].splice(action.meta.arg.data.seq_num, 1)
+                state[action.meta.arg.previouslyRow].splice(action.meta.arg.previouslySeqNum, 0, action.meta.arg.data)
             })
     }
 })
