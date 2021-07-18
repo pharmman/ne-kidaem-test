@@ -1,7 +1,7 @@
 import {createTheme, ThemeProvider} from '@material-ui/core'
 import {Routes} from './Routes'
 
-export const Main= () => {
+export const Main = () => {
     const theme = createTheme({
         palette: {
             type: 'dark'
@@ -18,6 +18,20 @@ export const Main= () => {
                     borderColor: '#EFEFF0 !important'
                 }
             },
+            MuiFilledInput: {
+                root: {
+                    borderTopLeftRadius: '0px',
+                    borderTopRightRadius: '0px'
+                },
+                underline: {
+                    '&:after,&:before': {
+                        borderBottom: 'none'
+                    },
+                    '&:hover:before': {
+                        borderBottom: 'none'
+                    }
+                }
+            }
         }
     })
 
