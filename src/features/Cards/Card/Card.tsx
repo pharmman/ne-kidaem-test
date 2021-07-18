@@ -3,6 +3,7 @@ import React from 'react'
 import CloseIcon from '@material-ui/icons/Close'
 import {useDispatch} from 'react-redux'
 import {deleteCard} from '../cards-reducer'
+import {RowStatuses} from '../../../api/API'
 
 type CardProps = {
     id: number
@@ -39,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
 export const Card: React.FC<CardProps> = ({id, text}) => {
     const classes = useStyles()
     const dispatch = useDispatch()
-    const removeCard = () => dispatch(deleteCard(id))
+    const removeCard = () => dispatch(deleteCard({id}))
 
     return (
         <Box className={classes.cardWrapper}>

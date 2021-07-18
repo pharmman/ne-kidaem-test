@@ -1,18 +1,18 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit'
-import {cardsAPI, CardType, CreateCardRequestData, GetCardsRequestData, RowStatuses} from '../../api/API'
+import {cardsAPI, CardType, CreateCardRequestData, RowStatuses} from '../../api/API'
 import {setAppError, setAppStatus} from '../Application/application-reducer'
 
 export type CardsStateType = {
-    [key: string]: CardType[]
+    [value in RowStatuses]: CardType[]
 }
 
-export const getCards = createAsyncThunk('cards/getCards', async (params: { data: GetCardsRequestData } | undefined, {
+export const getCards = createAsyncThunk('cards/getCards', async (param: { row?: RowStatuses } | undefined, {
     dispatch,
     rejectWithValue
 }) => {
     dispatch(setAppStatus({loading: true}))
     try {
-        const res = await cardsAPI.getCards(params && params.data)
+        const res = await cardsAPI.getCards(param && param.row)
         return {cards: res.data}
     } catch (err) {
         console.log(err.payload.data.detail)
@@ -39,10 +39,13 @@ export const createCard = createAsyncThunk('cards/createCard', async (data: Crea
     }
 })
 
-export const deleteCard = createAsyncThunk('cards/deleteCard', async (id: number, {dispatch, rejectWithValue}) => {
+export const deleteCard = createAsyncThunk('cards/deleteCard', async (param: { id: number}, {
+    dispatch,
+    rejectWithValue
+}) => {
     dispatch(setAppStatus({loading: true}))
     try {
-        await cardsAPI.deleteCard(id)
+        await cardsAPI.deleteCard(param.id)
         dispatch(getCards())
     } catch (err) {
         dispatch(setAppError(err))
@@ -83,12 +86,12 @@ const slice = createSlice({
                 state[action.payload.card.row].push(action.payload.card)
             })
             .addCase(updateCard.pending, (state, action) => {
-                state[action.meta.arg.previouslyRow].splice(action.meta.arg.previouslySeqNum, 1)
+                state[action.meta.arg.previouslyRow as RowStatuses].splice(action.meta.arg.previouslySeqNum, 1)
                 state[action.meta.arg.data.row].splice(action.meta.arg.data.seq_num, 0, action.meta.arg.data)
             })
             .addCase(updateCard.rejected, (state, action) => {
                 state[action.meta.arg.data.row].splice(action.meta.arg.data.seq_num, 1)
-                state[action.meta.arg.previouslyRow].splice(action.meta.arg.previouslySeqNum, 0, action.meta.arg.data)
+                state[action.meta.arg.previouslyRow as RowStatuses].splice(action.meta.arg.previouslySeqNum, 0, action.meta.arg.data)
             })
     }
 })

@@ -1,9 +1,9 @@
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit'
-import {authAPI, LoginRequestData, RegisterRequestData} from '../../api/API'
+import {authAPI, LoginRegisterRequestData} from '../../api/API'
 import {setAppError, setAppStatus} from '../Application/application-reducer'
 
 
-export const login = createAsyncThunk('auth/login', async (data: LoginRequestData, {dispatch, rejectWithValue}) => {
+export const login = createAsyncThunk('auth/login', async (data: LoginRegisterRequestData, {dispatch, rejectWithValue}) => {
     dispatch(setAppStatus({loading: true}))
     try {
         let res = await authAPI.login(data)
@@ -17,7 +17,7 @@ export const login = createAsyncThunk('auth/login', async (data: LoginRequestDat
     }
 })
 
-export const registration = createAsyncThunk('auth/registration', async (data: RegisterRequestData, {
+export const registration = createAsyncThunk('auth/registration', async (data: LoginRegisterRequestData, {
     dispatch,
     rejectWithValue
 }) => {

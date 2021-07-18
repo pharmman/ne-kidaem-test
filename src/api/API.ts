@@ -13,13 +13,10 @@ interface LoginResponseData {
     token: string
 }
 
-export interface LoginRequestData {
+export interface LoginRegisterRequestData {
     username: string
     password: string
-}
-
-export interface RegisterRequestData extends LoginRequestData {
-    email?: string,
+    email?: string
 }
 
 interface RegisterResponseData extends LoginResponseData {
@@ -38,13 +35,8 @@ export interface CreateCardRequestData {
     text: string
 }
 
-export type GetCardsRequestData = {
-    row?: string
-}
-
 export const instance = axios.create({
     baseURL: 'https://trello.backend.tests.nekidaem.ru/api/v1/'
-    // withCredentials: true
 })
 
 instance.interceptors.request.use(function (config) {
@@ -57,10 +49,10 @@ instance.interceptors.request.use(function (config) {
 
 
 export const authAPI = {
-    login(data: LoginRequestData) {
+    login(data: LoginRegisterRequestData) {
         return instance.post<LoginResponseData>('users/login/', data)
     },
-    register(data: RegisterRequestData) {
+    register(data: LoginRegisterRequestData) {
         return instance.post<RegisterResponseData>('users/create/', data)
     },
     refreshToken(token: string) {
@@ -69,10 +61,10 @@ export const authAPI = {
 }
 
 export const cardsAPI = {
-    getCards(data?: GetCardsRequestData) {
+    getCards(row?: string) {
         return instance.get<CardType[]>('cards/', {
             params: {
-                row: data && data.row
+                row: row
             }
         })
     },
