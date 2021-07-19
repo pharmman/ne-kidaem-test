@@ -1,9 +1,9 @@
 import {CardType, RowStatuses} from '../../api/API'
 import {Row} from './Row'
 import {useDispatch, useSelector} from 'react-redux'
-import {useEffect} from 'react'
+import {useEffect, useState} from 'react'
 import {CardsStateType, getCards, updateCard} from './cards-reducer'
-import {Box, makeStyles} from '@material-ui/core'
+import {Box, Button, makeStyles} from '@material-ui/core'
 import {AppRootStateType} from '../../app/store'
 import {DragDropContext, DropResult} from 'react-beautiful-dnd'
 
@@ -47,7 +47,7 @@ export const RowsList = () => {
 
     //didn't make request if cards already in state
     useEffect(() => {
-        if (Object.keys(cards).length === 0) {
+        if (Object.keys(cards).length === 0 ) {
             dispatch(getCards())
         }
     }, [dispatch, cards])

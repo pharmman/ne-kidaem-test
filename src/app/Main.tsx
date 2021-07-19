@@ -1,5 +1,6 @@
 import {createTheme, ThemeProvider} from '@material-ui/core'
 import {Routes} from './Routes'
+import {ErrorSnackbar} from '../utils/ErrorSnackbar'
 
 export const Main = () => {
     const theme = createTheme({
@@ -41,6 +42,7 @@ export const Main = () => {
     return (
         <ThemeProvider theme={theme}>
             <Routes/>
+            <ErrorSnackbar/>
         </ThemeProvider>
     )
 }

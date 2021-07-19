@@ -31,6 +31,3 @@ store.subscribe(throttle(() => {
 store.subscribe(() => {
     localStorage.setItem('token', JSON.stringify(store.getState().auth.token))
 })
-
-// @ts-ignore
-window.store = store

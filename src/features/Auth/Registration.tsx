@@ -3,7 +3,7 @@ import {SubmitHandler, useForm} from 'react-hook-form'
 import {yupResolver} from '@hookform/resolvers/yup'
 import * as Yup from 'yup'
 import {useDispatch, useSelector} from 'react-redux'
-import {registration, setIsRegistered} from './auth-reducer'
+import {registration, setIsLogged, setIsRegistered} from './auth-reducer'
 import {AppRootStateType} from '../../app/store'
 import {NavLink, Redirect} from 'react-router-dom'
 import {PATH} from '../../app/Pages'
@@ -53,13 +53,14 @@ export const Registration = () => {
     useEffect(() => {
         if (first) {
             dispatch(setIsRegistered({isRegistered: false}))
+            dispatch(setIsLogged({isLogged: false}))
             setFirst(false)
         } else {
             isRegistered && setRedirect(true)
         }
     }, [dispatch, isRegistered, first])
 
-    if (isRegistered && redirect) return <Redirect to={PATH.LOGIN}/>
+    if (redirect) return <Redirect to={PATH.LOGIN}/>
     return (
         <Box className={classes.wrapper}>
             <Container className={classes.paper} maxWidth={'xs'}>

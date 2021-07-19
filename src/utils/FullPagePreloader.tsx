@@ -17,7 +17,7 @@ export const FullPagePreloader = () => {
     const classes = useStyles()
     return (
         <div className={classes.wrapper}>
-            {/*<CircularProgress size={100}/>*/}
+            <CircularProgress size={100}/>
         </div>
     )
 }

@@ -25,7 +25,7 @@ export const PATH = {
 export const pages: PageType[] = [
     {_id: 0, title: 'main', path: '/', exact: true, page: <Redirect to={PATH.LOGIN}/>},
     {_id: 1, title: 'login', path: PATH.LOGIN, exact: true, page: <AppRedirect><Login/></AppRedirect>},
-    {_id: 2, title: 'registration', path: PATH.REGISTRATION, exact: true, page: <Registration/>},
+    {_id: 2, title: 'registration', path: PATH.REGISTRATION, exact: true, page: <AppRedirect><Registration/></AppRedirect>},
     {
         _id: 3,
         title: 'application',

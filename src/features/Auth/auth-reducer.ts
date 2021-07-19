@@ -12,8 +12,9 @@ export const login = createAsyncThunk('auth/login', async (data: LoginRegisterRe
         let res = await authAPI.login(data)
         return {token: res.data.token}
     } catch (err) {
-        dispatch(setAppError({error: 'Some error occurred'}))
-        return rejectWithValue({errors: err.message})
+        const [message] = Object.values(err.response.data)[0] as Array<string>
+        dispatch(setAppError({error: message}))
+        return rejectWithValue(err)
     } finally {
         dispatch(setAppStatus({loading: false}))
     }
@@ -29,9 +30,9 @@ export const registration = createAsyncThunk('auth/registration', async (data: L
         dispatch(setIsRegistered({isRegistered: true}))
         return {token: res.data.token}
     } catch (err) {
-        // console.log(JSON.stringify(err))
-        // console.log(JSON.parse(JSON.stringify(err)).config,)
-        dispatch(setAppError({error: 'Some error occurred'}))
+        dispatch(setIsRegistered({isRegistered: false}))
+        const [message] = Object.values(err.response.data)[0] as Array<string>
+        dispatch(setAppError({error: message}))
         return rejectWithValue(err)
     } finally {
         dispatch(setAppStatus({loading: false}))

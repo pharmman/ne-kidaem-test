@@ -15,8 +15,7 @@ export const getCards = createAsyncThunk('cards/getCards', async (param: { row?:
         const res = await cardsAPI.getCards(param && param.row)
         return {cards: res.data}
     } catch (err) {
-        console.log(err.payload.data.detail)
-        dispatch(setAppError(err.payload.data.detail))
+        dispatch(setAppError({error: 'Some error occurred'}))
         return rejectWithValue({})
     } finally {
         dispatch(setAppStatus({loading: false}))
@@ -32,7 +31,7 @@ export const createCard = createAsyncThunk('cards/createCard', async (data: Crea
         const res = await cardsAPI.createCard(data)
         return {card: res.data}
     } catch (err) {
-        dispatch(setAppError(err))
+        dispatch(setAppError({error: 'Some error occurred'}))
         return rejectWithValue({})
     } finally {
         dispatch(setAppStatus({loading: false}))
@@ -48,7 +47,7 @@ export const deleteCard = createAsyncThunk('cards/deleteCard', async (param: { i
         await cardsAPI.deleteCard(param.id)
         dispatch(getCards())
     } catch (err) {
-        dispatch(setAppError(err))
+        dispatch(setAppError({error: 'Some error occurred'}))
         return rejectWithValue({})
     } finally {
         dispatch(setAppStatus({loading: false}))
