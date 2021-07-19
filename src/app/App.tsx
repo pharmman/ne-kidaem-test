@@ -3,16 +3,16 @@ import {Provider} from 'react-redux'
 import './App.css'
 import {Main} from './Main'
 import {store} from './store'
-import {HashRouter} from 'react-router-dom'
+import {BrowserRouter} from 'react-router-dom'
 
 function App() {
     return (
         <div className="App">
-            <HashRouter>
+            <BrowserRouter>
                 <Provider store={store}>
                     <Main/>
                 </Provider>
-            </HashRouter>
+            </BrowserRouter>
         </div>
     )
 }
