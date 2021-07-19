@@ -10,22 +10,22 @@ export const LoginRedirect: React.FC = ({children}) => {
     const [redirect, setRedirect] = useState(false)
     const dispatch = useDispatch()
     const isLogged = useSelector<AppRootStateType, boolean>(state => state.auth.isLogged)
+    const isLoading = useSelector<AppRootStateType, boolean>(state => state.app.loading)
     const token = JSON.parse(localStorage.getItem('token') as string)
 
+
     useEffect(() => {
-        if (first) {
+        if (first && !isLogged) {
             dispatch(tokenRefresh(token))
             setFirst(false)
         } else {
-            if (!isLogged) setRedirect(true)
+            if (!isLogged && !isLoading) {
+                setRedirect(true)
+            }
         }
-    }, [dispatch, first, token, redirect, isLogged])
+    }, [dispatch, first, token, isLogged, isLoading])
 
-
-    if (redirect) {
-        return <Redirect to={PATH.LOGIN}/>
-    }
-
+    if (redirect) return <Redirect to={PATH.LOGIN}/>
     return (
         <>
             {children}

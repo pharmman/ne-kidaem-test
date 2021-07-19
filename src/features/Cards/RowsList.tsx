@@ -6,6 +6,8 @@ import {CardsStateType, getCards, updateCard} from './cards-reducer'
 import {Box, Button, makeStyles} from '@material-ui/core'
 import {AppRootStateType} from '../../app/store'
 import {DragDropContext, DropResult} from 'react-beautiful-dnd'
+import {Redirect} from 'react-router-dom'
+import {PATH} from '../../app/Pages'
 
 type TitlesColor = {
     [key in RowsTitles]: string
@@ -15,15 +17,22 @@ export type RowsTitles = keyof typeof RowStatuses
 
 const useStyles = makeStyles({
     wrapper: {
+        position: 'relative',
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'row',
+        justifyContent: 'space-around',
         flexWrap: 'wrap',
         backgroundColor: 'var(--main-bg-color)',
-        ['@media (max-width:580px)']: { // eslint-disable-line no-useless-computed-key
+        '@media (max-width:580px)': {
             flexDirection: 'column',
             alignContent: 'center'
         }
+    },
+    logoutButton: {
+        position: 'absolute',
+        bottom: '0',
+        right: '0'
     }
 })
 
@@ -37,6 +46,8 @@ const titlesColor: TitlesColor = {
 export const RowsList = () => {
     const classes = useStyles()
     const dispatch = useDispatch()
+    const [redirect, setRedirect] = useState(false)
+    const logoutHandler = () => setRedirect(true)
 
     //rows names
     const statuses = Object.keys(RowStatuses)
@@ -47,10 +58,12 @@ export const RowsList = () => {
 
     //didn't make request if cards already in state
     useEffect(() => {
-        if (Object.keys(cards).length === 0 ) {
+        if (Object.keys(cards).length === 0) {
             dispatch(getCards())
         }
     }, [dispatch, cards])
+
+    if (redirect) return <Redirect to={PATH.LOGIN}/>
 
     const onDragEnd = (result: DropResult) => {
         if (!result.destination) return
@@ -73,6 +86,7 @@ export const RowsList = () => {
             <DragDropContext onDragEnd={(result) => onDragEnd(result)}>
                 {mappedRows}
             </DragDropContext>
+            <Button className={classes.logoutButton} onClick={logoutHandler}>Log Out</Button>
         </Box>
     )
 }

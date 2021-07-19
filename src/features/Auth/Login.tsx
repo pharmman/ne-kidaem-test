@@ -2,10 +2,13 @@ import {Box, Button, Container, FormControl, makeStyles, TextField, Typography} 
 import {SubmitHandler, useForm} from 'react-hook-form'
 import * as Yup from 'yup'
 import {yupResolver} from '@hookform/resolvers/yup'
-import {useDispatch} from 'react-redux'
-import {login} from './auth-reducer'
-import {NavLink} from 'react-router-dom'
+import {useDispatch, useSelector} from 'react-redux'
+import {login, logout, setIsLogged} from './auth-reducer'
+import {NavLink, Redirect} from 'react-router-dom'
 import {PATH} from '../../app/Pages'
+import {useEffect, useState} from 'react'
+import {AppRootStateType} from '../../app/store'
+import {saveState} from '../../utils/localStorageUtils'
 
 type LoginInputs = {
     username: string
@@ -51,6 +54,9 @@ export const authUseStyles = makeStyles((theme) => ({
 
 export const Login = () => {
     const dispatch = useDispatch()
+    const isLogged = useSelector<AppRootStateType, boolean>(state => state.auth.isLogged)
+    const [redirect, setRedirect] = useState(false)
+    const [first, setFirst] = useState(true)
 
     //styles
     const classes = authUseStyles()
@@ -61,6 +67,22 @@ export const Login = () => {
         resolver: yupResolver(loginValidationSchema)
     })
     const onSubmit: SubmitHandler<LoginInputs> = data => dispatch(login(data))
+
+    saveState({
+        cards: {},
+    } as AppRootStateType)
+
+    useEffect(() => {
+        if (first) {
+            dispatch(logout())
+            dispatch(setIsLogged({isLogged: false}))
+            setFirst(false)
+        } else {
+            if (isLogged) setRedirect(true)
+        }
+    }, [isLogged, first, dispatch])
+
+    if (redirect) return <Redirect to={PATH.APPLICATION}/>
 
     return (
         <Box className={classes.wrapper}>

@@ -19,8 +19,10 @@ const useStyles = makeStyles<unknown, { color: string }>({
         display: 'flex',
         flexDirection: 'column',
         margin: '10px',
-        marginInlineEnd: 'auto',
-        marginBottom: 'auto'
+        marginBottom: 'auto',
+        '@media (max-width:1140px)': {
+            marginInlineEnd: 'initial',
+        }
     },
     title: {
         backgroundColor: props => props.color,
@@ -55,7 +57,7 @@ export const Row: React.FC<RowProps> = ({title, color}) => {
                             <div {...provided.droppableProps} ref={provided.innerRef}>
                                 {cards && cards.map((c, index) =>
                                     <Draggable key={c.id} draggableId={c.id.toString()} index={index}>
-                                        {(provided, snapshot) => {
+                                        {(provided) => {
                                             return (
                                                 <div ref={provided.innerRef}
                                                      {...provided.draggableProps}

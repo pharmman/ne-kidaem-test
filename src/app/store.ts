@@ -12,7 +12,7 @@ export type AppRootStateType = ReturnType<typeof store.getState>
 export const rootReducer = combineReducers({
     app: appReducer,
     auth: authReducer,
-    cards: cardsReducer,
+    cards: cardsReducer
 })
 
 export const store = configureStore({
@@ -23,8 +23,7 @@ export const store = configureStore({
 
 store.subscribe(throttle(() => {
     saveState({
-        cards: store.getState().cards,
-        auth: store.getState().auth
+        cards: store.getState().cards
     } as AppRootStateType)
 }, 1000))
 

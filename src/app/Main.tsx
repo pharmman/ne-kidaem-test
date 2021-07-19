@@ -36,9 +36,6 @@ export const Main = () => {
         }
     })
 
-
-
-
     return (
         <ThemeProvider theme={theme}>
             <Routes/>

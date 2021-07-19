@@ -3,7 +3,6 @@ import React from 'react'
 import CloseIcon from '@material-ui/icons/Close'
 import {useDispatch} from 'react-redux'
 import {deleteCard} from '../cards-reducer'
-import {RowStatuses} from '../../../api/API'
 
 type CardProps = {
     id: number

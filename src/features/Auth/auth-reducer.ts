@@ -1,6 +1,6 @@
-import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit'
+import {createAction, createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit'
 import {authAPI, LoginRegisterRequestData} from '../../api/API'
-import {setAppError, setAppStatus, setIsInitialized} from '../Application/application-reducer'
+import {setAppError, setAppStatus} from '../Application/application-reducer'
 
 
 export const login = createAsyncThunk('auth/login', async (data: LoginRegisterRequestData, {
@@ -41,7 +41,7 @@ export const registration = createAsyncThunk('auth/registration', async (data: L
 
 export const tokenRefresh = createAsyncThunk('application/tokenRefresh', async (token: string, {
         dispatch,
-        rejectWithValue,
+        rejectWithValue
     }) => {
         dispatch(setAppStatus({loading: true}))
         try {
@@ -53,18 +53,18 @@ export const tokenRefresh = createAsyncThunk('application/tokenRefresh', async (
             return rejectWithValue(err)
         } finally {
             dispatch(setAppStatus({loading: false}))
-            dispatch(setIsInitialized({isInitialized: true}))
         }
     }
 )
 
+export const logout = createAction('auth/logout')
 
 export const slice = createSlice({
     name: 'auth',
     initialState: {
         isLogged: false,
         isRegistered: false,
-        token: ''
+        token: JSON.parse(localStorage.getItem('token') as string)
     },
     reducers: {
         setIsLogged: (state, action: PayloadAction<{ isLogged: boolean }>) => {

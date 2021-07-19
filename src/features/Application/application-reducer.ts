@@ -6,12 +6,10 @@ export type appReducerInitialState = typeof initialState
 const initialState = {
     loading: false,
     error: null as AppErrorType,
-    isInitialized: false
 }
 
 export const setAppStatus = createAction<{ loading: boolean }>('app/setAppStatus')
 export const setAppError = createAction<{ error: AppErrorType }>('app/setAppError')
-export const setIsInitialized = createAction<{ isInitialized: boolean }>('app/setIsInitialized')
 
 export const slice = createSlice({
     name: 'app',
@@ -24,9 +22,6 @@ export const slice = createSlice({
             .addCase(setAppError, (state, action) => {
                 state.error = action.payload.error
             })
-        builder.addCase(setIsInitialized, (state, action) => {
-            state.isInitialized = action.payload.isInitialized
-        })
     }
 })
 

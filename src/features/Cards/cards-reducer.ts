@@ -1,11 +1,13 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit'
 import {cardsAPI, CardType, CreateCardRequestData, RowStatuses} from '../../api/API'
 import {setAppError, setAppStatus} from '../Application/application-reducer'
+import {logout} from '../Auth/auth-reducer'
 
 export type CardsStateType = {
     [value in RowStatuses]: CardType[]
 }
 
+//thunks
 export const getCards = createAsyncThunk('cards/getCards', async (param: { row?: RowStatuses } | undefined, {
     dispatch,
     rejectWithValue
@@ -38,7 +40,7 @@ export const createCard = createAsyncThunk('cards/createCard', async (data: Crea
     }
 })
 
-export const deleteCard = createAsyncThunk('cards/deleteCard', async (param: { id: number}, {
+export const deleteCard = createAsyncThunk('cards/deleteCard', async (param: { id: number }, {
     dispatch,
     rejectWithValue
 }) => {
@@ -70,7 +72,7 @@ export const updateCard = createAsyncThunk('cards/updateCard', async (param: { d
     }
 })
 
-
+//!!!UpdateCard if connection lost card will be on start position
 const slice = createSlice({
     name: 'cards',
     initialState: {} as CardsStateType,
@@ -80,6 +82,8 @@ const slice = createSlice({
             Object.values(RowStatuses).forEach(r => {
                 state[r] = action.payload.cards.filter(c => c.row === r)
             })
+        }).addCase(logout, state => {
+            return {} as CardsStateType
         })
             .addCase(createCard.fulfilled, (state, action) => {
                 state[action.payload.card.row].push(action.payload.card)
