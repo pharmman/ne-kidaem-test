@@ -50,11 +50,9 @@ export const Registration = () => {
     })
     const onSubmit: SubmitHandler<RegistrationInputs> = data => dispatch(registration(data))
 
-    //delete token from localstorage for registrationlogin  another user
     useEffect(() => {
         if (first) {
             dispatch(setIsRegistered({isRegistered: false}))
-            localStorage.setItem('token', JSON.stringify(''))
             setFirst(false)
         } else {
             isRegistered && setRedirect(true)

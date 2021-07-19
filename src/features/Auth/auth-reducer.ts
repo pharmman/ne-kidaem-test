@@ -1,13 +1,15 @@
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit'
 import {authAPI, LoginRegisterRequestData} from '../../api/API'
-import {setAppError, setAppStatus} from '../Application/application-reducer'
+import {setAppError, setAppStatus, setIsInitialized} from '../Application/application-reducer'
 
 
-export const login = createAsyncThunk('auth/login', async (data: LoginRegisterRequestData, {dispatch, rejectWithValue}) => {
+export const login = createAsyncThunk('auth/login', async (data: LoginRegisterRequestData, {
+    dispatch,
+    rejectWithValue
+}) => {
     dispatch(setAppStatus({loading: true}))
     try {
         let res = await authAPI.login(data)
-        dispatch(setIsLogged({isLogged: true}))
         return {token: res.data.token}
     } catch (err) {
         dispatch(setAppError({error: 'Some error occurred'}))
@@ -27,6 +29,8 @@ export const registration = createAsyncThunk('auth/registration', async (data: L
         dispatch(setIsRegistered({isRegistered: true}))
         return {token: res.data.token}
     } catch (err) {
+        // console.log(JSON.stringify(err))
+        // console.log(JSON.parse(JSON.stringify(err)).config,)
         dispatch(setAppError({error: 'Some error occurred'}))
         return rejectWithValue(err)
     } finally {
@@ -37,7 +41,6 @@ export const registration = createAsyncThunk('auth/registration', async (data: L
 export const tokenRefresh = createAsyncThunk('application/tokenRefresh', async (token: string, {
         dispatch,
         rejectWithValue,
-        getState
     }) => {
         dispatch(setAppStatus({loading: true}))
         try {
@@ -49,6 +52,7 @@ export const tokenRefresh = createAsyncThunk('application/tokenRefresh', async (
             return rejectWithValue(err)
         } finally {
             dispatch(setAppStatus({loading: false}))
+            dispatch(setIsInitialized({isInitialized: true}))
         }
     }
 )
